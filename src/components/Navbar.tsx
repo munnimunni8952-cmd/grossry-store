@@ -33,13 +33,23 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200 group-hover:rotate-12 transition-transform">
+          <Link to="/" className="flex items-center gap-2 group relative">
+            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200 group-hover:rotate-[-10deg] transition-all duration-300 relative z-10">
               <ShoppingBasket size={24} />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-              FreshCart
-            </span>
+            <div className="flex flex-col -gap-1">
+              <span className="text-xl sm:text-2xl font-black tracking-tighter text-gray-900 leading-none">
+                FRESH<span className="text-green-600">CART</span>
+              </span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-gray-400 leading-none">
+                Premium Grocery
+              </span>
+            </div>
+            <motion.div 
+              initial={false}
+              whileHover={{ scale: 1.2, opacity: 0.1 }}
+              className="absolute -inset-2 bg-green-600 rounded-2xl opacity-0 transition-opacity"
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -229,6 +239,7 @@ export const Navbar = () => {
                           <img 
                             src={product.image} 
                             alt={product.name}
+                            loading="lazy"
                             className="w-20 h-20 object-cover rounded-xl"
                             referrerPolicy="no-referrer"
                           />

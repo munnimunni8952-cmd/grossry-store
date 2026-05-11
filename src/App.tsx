@@ -6,6 +6,8 @@ import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrdersPage } from './pages/OrdersPage';
+import { WishlistPage } from './pages/WishlistPage';
+import { ContactPage } from './pages/ContactPage';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { StickyCartBar } from './components/StickyCartBar';
@@ -38,6 +40,8 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/contact" element={<ContactPage />} />
                 {/* Fallback to home */}
                 <Route path="*" element={<Home />} />
               </Routes>

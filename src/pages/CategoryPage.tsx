@@ -66,30 +66,43 @@ export const CategoryPage = () => {
   return (
     <div className="pb-20">
       {/* Header */}
-      <div className="bg-gray-50 border-b border-gray-100 mb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-3 text-sm font-medium text-gray-500 mb-6">
-            <Link to="/" className="hover:text-green-600 transition-colors">Home</Link>
-            <ChevronRight size={14} className="text-gray-300" />
-            <span className="text-gray-900 font-bold uppercase tracking-wider">{category.name}</span>
-          </div>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h1 className="text-4xl sm:text-6xl font-black text-gray-900 uppercase tracking-tighter leading-none">
-                {category.name}
-              </h1>
-              <p className="text-gray-500 mt-4 font-medium max-w-xl">
-                Explore our premium selection of fresh {category.name.toLowerCase()} sourced directly from organic farms for your healthy lifestyle.
-              </p>
+      <div className="relative h-[300px] sm:h-[400px] mb-12 overflow-hidden">
+        <img 
+          src={category.image} 
+          alt={category.name}
+          className="w-full h-full object-cover"
+          loading="eager"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        
+        <div className="absolute inset-0 flex flex-col justify-end">
+          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+            <div className="flex items-center gap-3 text-sm font-bold text-white/60 mb-4 px-1">
+              <Link to="/" className="hover:text-white transition-colors">Home</Link>
+              <ChevronRight size={14} />
+              <span className="text-white">{category.name}</span>
             </div>
-            <div className="flex items-center gap-4">
-              <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold hover:border-green-600 transition-colors">
-                <SlidersHorizontal size={18} />
-                Filters
-              </button>
-              <div className="text-sm font-bold text-gray-400">
-                <span className="text-gray-900">{products.length}</span> Products Found
-              </div>
+            <h1 className="text-5xl sm:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-4">
+              {category.name}
+            </h1>
+            <p className="text-white/70 font-medium max-w-xl text-lg px-1">
+              Explore our premium selection of fresh {category.name.toLowerCase()} sourced directly from organic farms.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid Controls */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-black transition-all">
+              <SlidersHorizontal size={18} />
+              Filters
+            </button>
+            <div className="text-sm font-bold text-gray-400">
+              <span className="text-gray-900">{products.length}</span> Products Found
             </div>
           </div>
         </div>

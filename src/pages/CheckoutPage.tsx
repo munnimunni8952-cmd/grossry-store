@@ -15,29 +15,30 @@ export const CheckoutPage = () => {
   const [isOrdered, setIsOrdered] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    name: user?.displayName || '',
     phone: '',
     address: '',
-    payment: 'COD'
+    payment: 'COD',
+    notes: ''
   });
+
+  React.useEffect(() => {
+    if (user && !formData.name) {
+      setFormData(prev => ({ ...prev, name: user.displayName || '' }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      alert("Please login to place an order");
-      signIn();
-      return;
-    }
-
     setIsSubmitting(true);
     
     try {
-      const orderData = {
-        userId: user.uid,
+      const orderData: any = {
         customerName: formData.name,
         phone: formData.phone,
         address: formData.address,
+        notes: formData.notes,
         paymentMethod: formData.payment,
         totalAmount: total,
         items: cart.map(item => ({
@@ -49,6 +50,10 @@ export const CheckoutPage = () => {
         status: 'pending',
         createdAt: serverTimestamp()
       };
+
+      if (user) {
+        orderData.userId = user.uid;
+      }
 
       await addDoc(collection(db, 'orders'), orderData);
       
@@ -154,6 +159,16 @@ export const CheckoutPage = () => {
                     className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl py-4 px-6 focus:border-green-600 focus:bg-white outline-none font-bold placeholder:text-gray-300 transition-all resize-none"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs uppercase font-black text-gray-400 mb-2 block tracking-wider">Delivery Notes (Optional)</label>
+                  <textarea 
+                    rows={2}
+                    placeholder="E.g. Ring the bell, leave at the gate, etc."
+                    className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl py-4 px-6 focus:border-green-600 focus:bg-white outline-none font-bold placeholder:text-gray-300 transition-all resize-none"
+                    value={formData.notes}
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
                   />
                 </div>
               </div>

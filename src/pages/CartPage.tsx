@@ -58,7 +58,7 @@ export const CartPage = () => {
                 className="bg-white rounded-[2.5rem] border border-gray-100 p-6 sm:p-8 flex items-center gap-6 group hover:border-green-200 hover:shadow-xl transition-all"
               >
                 <Link to={`/product/${item.id}`} className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-gray-50 shrink-0 shadow-sm">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={item.image} alt={item.name} loading="lazy" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </Link>
                 
                 <div className="flex-1 flex flex-col sm:flex-row justify-between gap-6">
@@ -88,13 +88,14 @@ export const CartPage = () => {
                       </button>
                     </div>
 
-                    <div className="flex flex-col items-end min-w-[100px]">
-                      <p className="text-lg font-black text-gray-900">₹{(item.price * item.quantity).toFixed(0)}</p>
+                    <div className="flex flex-col items-end justify-between self-stretch min-w-[120px]">
+                      <p className="text-xl font-black text-gray-900">₹{(item.price * item.quantity).toFixed(0)}</p>
                       <button 
                         onClick={() => removeFromCart(item.id)}
-                        className="text-gray-300 hover:text-red-500 transition-colors p-2 -mr-2"
+                        className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-all font-black uppercase tracking-[0.2em] text-[10px] group/remove bg-gray-50 hover:bg-red-50 px-3 py-2 rounded-xl border border-transparent hover:border-red-100"
                       >
-                        <Trash2 size={20} />
+                        <Trash2 size={14} className="group-hover/remove:scale-110 transition-transform" />
+                        <span>Remove</span>
                       </button>
                     </div>
                   </div>

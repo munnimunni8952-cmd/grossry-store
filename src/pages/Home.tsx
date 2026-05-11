@@ -4,7 +4,7 @@ import { ArrowRight, Star, ShoppingBag, Truck, ShieldCheck, Clock, ChevronRight,
 import { CATEGORIES as STATIC_CATEGORIES, PRODUCTS as STATIC_PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../lib/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { seedDatabase } from '../lib/seed';
@@ -17,7 +17,7 @@ const HERO_SLIDES = [
     title: "Freshness Delivered to Your Doorstep",
     subtitle: "UP TO 40% OFF",
     description: "Get the finest organic vegetables and fruits sourced directly from local farms. Pure quality, pure health.",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1920",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1920&fm=webp",
     color: "bg-green-600",
     textPosition: "left"
   },
@@ -26,18 +26,28 @@ const HERO_SLIDES = [
     title: "Organic Daily Essentials Store",
     subtitle: "NEW ARRIVALS",
     description: "Discover our wide range of organic daily essentials. From farm-fresh milk to pure Himalayan honey.",
-    image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=1920",
+    image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=1920&fm=webp",
     color: "bg-orange-500",
     textPosition: "center"
   }
 ];
 
 export const Home = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { isAdmin } = useAuth();
+
+  useEffect(() => {
+    // Handle hash scroll on location change
+    const hash = location.hash.replace('#', '');
+    if (hash) {
+      setTimeout(() => scrollToSection(hash), 100);
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,6 +74,13 @@ export const Home = () => {
       unsubCategories();
     };
   }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const trendingProducts = products.filter(p => p.isTrending);
   const featuredFruits = products.filter(p => p.category === 'Fruits');
@@ -95,6 +112,7 @@ export const Home = () => {
                 <img 
                   src={slide.image} 
                   alt={slide.title}
+                  loading="eager"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -121,10 +139,16 @@ export const Home = () => {
                       "flex flex-wrap gap-4",
                       slide.textPosition === 'center' ? 'justify-center' : ''
                     )}>
-                      <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-green-900/40 flex items-center gap-3 group">
+                      <button 
+                        onClick={() => scrollToSection('categories')}
+                        className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-green-900/40 flex items-center gap-3 group"
+                      >
                         Shop Now <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                       </button>
-                      <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-2xl font-bold uppercase tracking-wider transition-all">
+                      <button 
+                        onClick={() => scrollToSection('trending')}
+                        className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-2xl font-bold uppercase tracking-wider transition-all"
+                      >
                         View Offers
                       </button>
                     </div>
@@ -179,7 +203,10 @@ export const Home = () => {
             <span className="text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-2 block">Departments</span>
             <h2 className="text-3xl sm:text-5xl font-black text-gray-900 uppercase tracking-tighter">Shop by Category</h2>
           </div>
-          <button className="hidden sm:flex items-center gap-2 text-green-600 font-bold hover:gap-3 transition-all underline underline-offset-8">
+          <button 
+            onClick={() => scrollToSection('categories')}
+            className="hidden sm:flex items-center gap-2 text-green-600 font-bold hover:gap-3 transition-all underline underline-offset-8"
+          >
             View All Categories <ArrowRight size={18} />
           </button>
           {isAdmin && (
@@ -205,6 +232,7 @@ export const Home = () => {
                   <img 
                     src={category.image} 
                     alt={category.name}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -225,7 +253,7 @@ export const Home = () => {
 
       {/* Trending Products */}
       <section id="trending" className="bg-gray-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="offers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <span className="text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-2 block">Hot Deals</span>
@@ -262,8 +290,9 @@ export const Home = () => {
         {/* Promo Banner */}
         <section className="relative h-[400px] rounded-[40px] overflow-hidden group">
           <img 
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1920" 
+            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=70&w=1200&fm=webp" 
             alt="Promo"
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
             referrerPolicy="no-referrer"
           />
@@ -272,7 +301,10 @@ export const Home = () => {
               <span className="text-orange-400 font-black tracking-widest uppercase mb-4 block">Limited Time Offer</span>
               <h2 className="text-5xl font-black mb-6 uppercase tracking-tighter leading-none">Fresh Farm <br /> Veggies Combo</h2>
               <p className="text-lg text-white/80 mb-8 font-medium">Get a curated box of 10 organic vegetables for just ₹299. Freshly harvested this morning.</p>
-              <button className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-orange-900/20">
+              <button 
+                onClick={() => navigate('/category/vegetables')}
+                className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-orange-900/20"
+              >
                 Order Box Now
               </button>
             </div>

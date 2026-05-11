@@ -54,9 +54,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
 
       {/* Image */}
       <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-gray-50">
-        <img 
+        <motion.img 
+          layoutId={`prod-img-${product.id}`}
           src={product.image} 
           alt={product.name}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           referrerPolicy="no-referrer"
         />

@@ -28,17 +28,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userSnap = await getDoc(userRef);
         
         if (!userSnap.exists()) {
-          await setDoc(userRef, {
+          const newUser = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
             photoURL: firebaseUser.photoURL,
-            isAdmin: false,
+            isAdmin: firebaseUser.email === 'munnimunni8952@gmail.com',
             createdAt: new Date().toISOString()
-          });
-          setIsAdmin(false);
+          };
+          await setDoc(userRef, newUser);
+          setIsAdmin(newUser.isAdmin);
         } else {
-          setIsAdmin(userSnap.data()?.isAdmin || false);
+          const userData = userSnap.data();
+          // If the user's email is the admin email but they aren't marked as admin yet, update them
+          if (firebaseUser.email === 'munnimunni8952@gmail.com' && !userData?.isAdmin) {
+            await setDoc(userRef, { ...userData, isAdmin: true }, { merge: true });
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(userData?.isAdmin || false);
+          }
         }
       } else {
         setUser(null);

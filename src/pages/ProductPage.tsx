@@ -85,8 +85,18 @@ export const ProductPage = () => {
   const cartItem = cart.find(item => item.id === product.id);
   const isWishlisted = wishlist.includes(product.id);
 
+  const handleBuyNow = () => {
+    if (!product) return;
+    if (!cartItem) {
+      addToCart(product);
+    }
+    navigate('/checkout');
+  };
+
+  const images = product.images && product.images.length > 0 ? product.images : [product.image];
+
   return (
-    <div className="pb-20">
+    <div className="pb-32 lg:pb-20">
       {/* Breadcrumbs */}
       <div className="bg-gray-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-3 text-sm font-medium">
@@ -102,28 +112,27 @@ export const ProductPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Image Gallery */}
           <div className="space-y-6">
-            <motion.div 
-              layoutId={product.id}
-              className="aspect-square rounded-[3rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-xl"
-            >
-              <img 
-                src={product.images[selectedImage]} 
+            <div className="aspect-square rounded-[3rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-xl">
+              <motion.img 
+                layoutId={`prod-img-${product.id}`}
+                src={images[selectedImage] || product.image} 
                 alt={product.name}
+                loading="eager"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
-            </motion.div>
-            <div className="flex gap-4">
-              {product.images.map((img, i) => (
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {images.map((img, i) => (
                 <button 
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={cn(
-                    "w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all shadow-md",
+                    "w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all shadow-md shrink-0",
                     selectedImage === i ? "border-green-600 scale-105" : "border-transparent opacity-60 hover:opacity-100"
                   )}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </button>
               ))}
             </div>
@@ -212,12 +221,12 @@ export const ProductPage = () => {
                 </button>
               </div>
               <button 
-                onClick={() => navigate('/checkout')}
-                className="flex-1 h-14 sm:h-16 bg-gradient-to-br from-gray-800 to-black hover:from-black hover:to-black text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center transition-all shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 active:scale-[0.98] text-sm sm:text-base border border-white/10"
+                onClick={handleBuyNow}
+                className="flex-1 h-14 sm:h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center transition-all shadow-xl shadow-orange-900/20 hover:shadow-2xl hover:shadow-orange-900/40 hover:-translate-y-1 active:scale-[0.98] text-sm sm:text-base border border-white/10"
               >
                 Buy Now
               </button>
-            </div>
+</div>
 
             {/* Mobile Sticky Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-2xl border-t border-gray-100 md:hidden flex gap-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.15)]">
@@ -247,12 +256,12 @@ export const ProductPage = () => {
                 </button>
               )}
               <button 
-                onClick={() => navigate('/checkout')}
-                className="flex-[2] h-16 bg-gradient-to-br from-gray-800 to-black text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center shadow-xl shadow-black/30 active:scale-[0.98] text-sm tracking-tight border border-white/5"
+                onClick={handleBuyNow}
+                className="flex-[2] h-16 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center shadow-xl shadow-orange-900/30 active:scale-[0.98] text-sm tracking-tight border border-white/5"
               >
                 Buy Now
               </button>
-            </div>
+</div>
 
             <div className="grid grid-cols-2 gap-6 bg-gray-50 rounded-[2rem] p-8">
               {[
