@@ -1,88 +1,58 @@
 {
   "entities": {
-    "Product": {
-      "title": "Product",
-      "description": "A food product available for purchase.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "category": { "type": "string" },
-        "price": { "type": "number" },
-        "originalPrice": { "type": "number" },
-        "image": { "type": "string" },
-        "images": { "type": "array", "items": { "type": "string" } },
-        "description": { "type": "string" },
-        "rating": { "type": "number" },
-        "reviewsCount": { "type": "number" },
-        "isTrending": { "type": "boolean" },
-        "isOffer": { "type": "boolean" },
-        "unit": { "type": "string" }
-      },
-      "required": ["id", "name", "category", "price", "image", "description", "unit"]
-    },
     "Category": {
       "title": "Category",
-      "description": "A product category.",
+      "description": "Product category",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "name": { "type": "string" },
-        "image": { "type": "string" },
-        "icon": { "type": "string" }
-      },
-      "required": ["id", "name", "image", "icon"]
+        "name": { "type": "string" }
+      }
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Product details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      }
     },
     "User": {
       "title": "User",
-      "description": "User profile data.",
+      "description": "User profile",
       "type": "object",
       "properties": {
         "uid": { "type": "string" },
-        "email": { "type": "string" },
-        "displayName": { "type": "string" },
-        "photoURL": { "type": "string" },
-        "phoneNumber": { "type": "string" },
-        "address": { "type": "string" },
-        "isAdmin": { "type": "boolean" }
-      },
-      "required": ["uid", "email"]
+        "email": { "type": "string" }
+      }
     },
     "Order": {
       "title": "Order",
-      "description": "A customer order.",
+      "description": "User order",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "customerName": { "type": "string" },
-        "phone": { "type": "string" },
-        "address": { "type": "string" },
-        "items": { "type": "array" },
-        "totalAmount": { "type": "number" },
-        "status": { "type": "string", "enum": ["pending", "processed", "shipped", "delivered", "cancelled"] },
-        "paymentMethod": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["id", "userId", "customerName", "phone", "address", "items", "totalAmount", "status", "paymentMethod", "createdAt"]
+        "status": { "type": "string" },
+        "userId": { "type": "string" }
+      }
     }
   },
   "firestore": {
-    "products": {
-      "schema": "Product",
-      "description": "Collection of all products."
+    "categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Categories collection"
     },
-    "categories": {
-      "schema": "Category",
-      "description": "Collection of product categories."
+    "products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Products collection"
     },
-    "users": {
-      "schema": "User",
-      "description": "User profiles and data."
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Users collection"
     },
-    "orders": {
-      "schema": "Order",
-      "description": "Customer orders."
+    "orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Orders collection"
     }
   }
 }

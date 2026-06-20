@@ -77,25 +77,12 @@ export const Footer = () => {
                 <p>support@freshcart.com</p>
               </div>
             </div>
-            <div className="pt-4">
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                <p className="text-xs uppercase tracking-wider font-bold mb-2 text-green-500">Download Our App</p>
-                <div className="flex gap-2">
-                  <div className="flex-1 bg-white h-10 rounded-lg flex items-center justify-center invert">
-                    <div className="w-6 h-6 bg-black rounded-sm" />
-                  </div>
-                  <div className="flex-1 bg-white h-10 rounded-lg flex items-center justify-center invert">
-                    <div className="w-6 h-6 bg-black rounded-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Bottom */}
         <div className="pt-10 border-t border-white/10 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} FreshCart Premium. All rights reserved.</p>
+          <p>Website made by Raj. © {new Date().getFullYear()} FreshCart Premium. All rights reserved.</p>
         </div>
       </div>
     </footer>

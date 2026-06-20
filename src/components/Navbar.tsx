@@ -1,22 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingBasket, Heart, Menu, X, User, ArrowRight } from 'lucide-react';
+import { Search, ShoppingBasket, Heart, Menu, X, User, ArrowRight, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import { PRODUCTS } from '../constants';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  
   const { itemCount, subtotal } = useCart();
   const { user, signIn, signOut } = useAuth();
   const navigate = useNavigate();
 
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'products'));
+        const mapped = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        setProducts(mapped.length > 0 ? mapped : PRODUCTS);
+      } catch (err) {
+        setProducts(PRODUCTS);
+        handleFirestoreError(err, OperationType.GET, 'products');
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const startListening = () => {
+    // @ts-ignore
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Speech Recognition.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0])
+        .map((result) => result.transcript)
+        .join('');
+      
+      setSearchQuery(transcript);
+    };
+
+    recognition.start();
+  };
+
   const filteredProducts = searchQuery.trim() 
-    ? PRODUCTS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
     : [];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -206,10 +259,21 @@ export const Navbar = () => {
                     autoFocus
                     type="text" 
                     placeholder="Search for fresh fruits, veggies, snacks..."
-                    className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-14 pr-4 focus:ring-2 focus:ring-green-500 text-lg outline-none"
+                    className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-14 pr-14 focus:ring-2 focus:ring-green-500 text-lg outline-none"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    onClick={startListening}
+                    title="Voice Search"
+                    className={cn(
+                      "absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors flex items-center justify-center",
+                      isListening ? "bg-red-100 text-red-600 animate-pulse" : "text-gray-400 hover:bg-gray-200"
+                    )}
+                  >
+                    {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                  </button>
                 </form>
                 <button 
                   onClick={() => {

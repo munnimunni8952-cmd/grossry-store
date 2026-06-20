@@ -4,9 +4,10 @@ import { ArrowLeft, CheckCircle2, User, Phone, MapPin, CreditCard, Wallet, Shiel
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { cn } from '../lib/utils';
+import { Order } from '../types';
 
 export const CheckoutPage = () => {
   const { total, clearCart, itemCount, cart } = useCart();
@@ -34,7 +35,7 @@ export const CheckoutPage = () => {
     setIsSubmitting(true);
     
     try {
-      const orderData: any = {
+      const orderData: Partial<Order> = {
         customerName: formData.name,
         phone: formData.phone,
         address: formData.address,
@@ -62,8 +63,7 @@ export const CheckoutPage = () => {
         clearCart();
       }, 500);
     } catch (error) {
-      console.error("Error creating order", error);
-      alert("Something went wrong. Please try again.");
+      handleFirestoreError(error, OperationType.WRITE, 'orders');
     } finally {
       setIsSubmitting(false);
     }

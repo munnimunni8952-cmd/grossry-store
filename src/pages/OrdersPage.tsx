@@ -1,34 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { ShoppingBasket, Package, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
-interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: string;
-  createdAt: any;
-}
-
 export const OrdersPage = () => {
   const { user } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
+    setLoading(true);
+    
     const q = query(
       collection(db, 'orders'),
       where('userId', '==', user.uid),
@@ -36,18 +24,18 @@ export const OrdersPage = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const ordersData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Order[];
+      const ordersData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setOrders(ordersData);
       setLoading(false);
     }, (error) => {
-      console.error("Error fetching orders", error);
+      console.error('Error fetching orders:', error);
       setLoading(false);
+      handleFirestoreError(error, OperationType.GET, 'orders');
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [user]);
 
   if (!user) {
@@ -93,7 +81,7 @@ export const OrdersPage = () => {
                   <div>
                     <h3 className="font-black text-gray-900 uppercase tracking-tight">Order #{order.id.slice(-6).toUpperCase()}</h3>
                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
-                       <Clock size={12} /> {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'Just now'}
+                       <Clock size={12} /> {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'Just now'}
                     </p>
                   </div>
                 </div>
@@ -104,7 +92,7 @@ export const OrdersPage = () => {
                   )}>
                     {order.status}
                   </span>
-                  <span className="text-xl font-black text-gray-900 tracking-tighter">₹{order.totalAmount.toFixed(0)}</span>
+                  <span className="text-xl font-black text-gray-900 tracking-tighter">₹{parseFloat(order.total_amount).toFixed(0)}</span>
                 </div>
               </div>
 
@@ -118,6 +106,13 @@ export const OrdersPage = () => {
                   </div>
                 ))}
               </div>
+
+              {order.notes && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Order Notes</p>
+                  <p className="text-sm text-gray-600 italic">"{order.notes}"</p>
+                </div>
+              )}
 
               <div className="mt-8 flex justify-end">
                 <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-green-600 hover:text-green-700 transition-colors">

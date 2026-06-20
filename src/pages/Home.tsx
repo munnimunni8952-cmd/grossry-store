@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Star, ShoppingBag, Truck, ShieldCheck, Clock, ChevronRight, ChevronLeft, Database } from 'lucide-react';
+import { ArrowRight, Star, ShoppingBag, Truck, ShieldCheck, Clock, ChevronRight, ChevronLeft } from 'lucide-react';
 import { CATEGORIES as STATIC_CATEGORIES, PRODUCTS as STATIC_PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../lib/utils';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { db } from '../lib/firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { seedDatabase } from '../lib/seed';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { Product, Category } from '../types';
+import { seedDatabase } from '../lib/seed';
 
 const HERO_SLIDES = [
   {
@@ -39,7 +39,27 @@ export const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isAdmin } = useAuth();
+  const [seeding, setSeeding] = useState(false);
+  const { isAdmin, user } = useAuth();
+
+  const handleSeed = async () => {
+    if (!window.confirm("Seed database with initial products and categories?")) return;
+    setSeeding(true);
+    try {
+      const result = await seedDatabase();
+      if (result.success) {
+        alert("Database seeded successfully! Page will reload.");
+        window.location.reload();
+      } else {
+        alert("Seeding failed. Check console for details.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Seeding failed.");
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   useEffect(() => {
     // Handle hash scroll on location change
@@ -58,15 +78,23 @@ export const Home = () => {
 
   useEffect(() => {
     const unsubProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productsData = snapshot.docs.map(doc => doc.data() as Product);
-      // Fallback to static if empty
+      const productsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Product));
       setProducts(productsData.length > 0 ? productsData : STATIC_PRODUCTS);
       setLoading(false);
+    }, (error) => {
+      console.error(error);
+      setProducts(STATIC_PRODUCTS);
+      setLoading(false);
+      handleFirestoreError(error, OperationType.GET, 'products');
     });
 
     const unsubCategories = onSnapshot(collection(db, 'categories'), (snapshot) => {
-      const categoriesData = snapshot.docs.map(doc => doc.data() as Category);
+      const categoriesData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Category));
       setCategories(categoriesData.length > 0 ? categoriesData : STATIC_CATEGORIES);
+    }, (error) => {
+      console.error(error);
+      setCategories(STATIC_CATEGORIES);
+      handleFirestoreError(error, OperationType.GET, 'categories');
     });
 
     return () => {
@@ -82,19 +110,29 @@ export const Home = () => {
     }
   };
 
-  const trendingProducts = products.filter(p => p.isTrending);
-  const featuredFruits = products.filter(p => p.category === 'Fruits');
-  const freshVeggies = products.filter(p => p.category === 'Vegetables');
-
-  const handleSeed = async () => {
-    if (window.confirm("Seed database with initial products?")) {
-      await seedDatabase();
-      alert("Database seeded!");
-    }
-  };
+  const trendingProducts = STATIC_PRODUCTS.filter(p => ['t1', 't2', 't3', 't4'].includes(p.id));
+  const summerSpecials = STATIC_PRODUCTS.filter(p => ['s1', 's2', 's3', 's4'].includes(p.id));
+  const freshVeggies = STATIC_PRODUCTS.filter(p => ['v1', 'v2'].includes(p.id));
 
   return (
     <div className="flex flex-col gap-16 pb-20">
+      {/* Admin Actions */}
+      {isAdmin && (
+        <div className="bg-orange-50 border-y border-orange-100 px-4 py-3 flex items-center justify-between z-50">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+            <p className="text-sm font-black text-orange-900 uppercase tracking-tight">Admin Mode Active</p>
+          </div>
+          <button 
+            onClick={handleSeed}
+            disabled={seeding}
+            className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all disabled:opacity-50"
+          >
+            {seeding ? 'Seeding...' : 'Seed Database'}
+          </button>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative h-[600px] sm:h-[700px] overflow-hidden">
         <AnimatePresence mode="wait">
@@ -203,32 +241,22 @@ export const Home = () => {
             <span className="text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-2 block">Departments</span>
             <h2 className="text-3xl sm:text-5xl font-black text-gray-900 uppercase tracking-tighter">Shop by Category</h2>
           </div>
-          <button 
-            onClick={() => scrollToSection('categories')}
-            className="hidden sm:flex items-center gap-2 text-green-600 font-bold hover:gap-3 transition-all underline underline-offset-8"
-          >
-            View All Categories <ArrowRight size={18} />
-          </button>
-          {isAdmin && (
-            <button 
-              onClick={handleSeed}
-              className="flex items-center gap-2 text-orange-600 font-bold hover:gap-3 transition-all bg-orange-50 px-4 py-2 rounded-xl"
-            >
-              Seed DB <Database size={18} />
-            </button>
-          )}
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {categories.map((category, i) => (
+        <div className="flex md:grid md:grid-cols-6 gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-6 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {STATIC_CATEGORIES.map((category, i) => (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
+              className="snap-start shrink-0"
             >
-              <Link to={`/category/${category.name.toLowerCase()}`} className="group cursor-pointer text-center block">
-                <div className="aspect-square rounded-[2rem] overflow-hidden mb-4 relative shadow-lg shadow-gray-100 border border-gray-100 ring-4 ring-transparent group-hover:ring-green-100 group-hover:border-green-200 transition-all duration-300">
+              <Link 
+                to={`/category/${category.name.toLowerCase()}`} 
+                className="group flex flex-col items-center bg-white rounded-[16px] p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer w-[150px] md:w-auto"
+              >
+                <div className="w-[120px] h-[120px] overflow-hidden bg-gray-50 rounded-[16px] mb-3">
                   <img 
                     src={category.image} 
                     alt={category.name}
@@ -236,13 +264,8 @@ export const Home = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center p-4">
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30 group-hover:bg-green-500 transition-colors">
-                      <ShoppingBag size={20} />
-                    </div>
-                  </div>
                 </div>
-                <h3 className="font-bold text-gray-900 group-hover:text-green-600 transition-colors uppercase tracking-tight text-sm">
+                <h3 className="font-bold text-gray-900 text-center text-sm tracking-tight line-clamp-1">
                   {category.name}
                 </h3>
               </Link>
@@ -260,7 +283,7 @@ export const Home = () => {
               <h2 className="text-3xl sm:text-5xl font-black text-gray-900 uppercase tracking-tighter">Trending Products</h2>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {trendingProducts.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}
@@ -270,19 +293,19 @@ export const Home = () => {
 
       {/* Featured Sections */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col gap-20">
-        {/* Fruits Section */}
+        {/* Summer Specials Section */}
         <section>
           <div className="flex justify-between items-end mb-10">
             <div>
-              <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Juicy Fruits</h2>
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-2 block">Seasonal Cuts</span>
+              <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Summer Specials</h2>
             </div>
-            <Link to="/category/fruits" className="text-green-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              Shop Now <ArrowRight size={18} />
-            </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredFruits.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
+          <div className="flex md:grid md:grid-cols-4 gap-4 sm:gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-6 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {summerSpecials.map((product, i) => (
+              <div key={product.id} className="snap-start shrink-0 w-[280px] md:w-auto">
+                <ProductCard product={product} index={i} />
+              </div>
             ))}
           </div>
         </section>

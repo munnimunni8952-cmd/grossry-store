@@ -6,7 +6,7 @@ import { PRODUCTS as STATIC_PRODUCTS } from '../constants';
 import { useCart } from '../context/CartContext';
 import { cn } from '../lib/utils';
 import { ProductCard } from '../components/ProductCard';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, limit, getDocs } from 'firebase/firestore';
 import { Product } from '../types';
 
@@ -29,8 +29,10 @@ export const ProductPage = () => {
         
         let p: Product | null = null;
         if (docSnap.exists()) {
-          p = { id: docSnap.id, ...docSnap.data() } as Product;
-        } else {
+          p = { ...docSnap.data(), id: docSnap.id } as Product;
+        }
+
+        if (!p) {
           // Fallback to static
           p = STATIC_PRODUCTS.find(p => p.id === id) || null;
         }
@@ -39,25 +41,39 @@ export const ProductPage = () => {
 
         if (p) {
           // Fetch related
-          const q = query(
-            collection(db, 'products'),
-            where('category', '==', p.category),
-            limit(5)
-          );
-          const relatedSnap = await getDocs(q);
-          const relatedData = relatedSnap.docs
-            .map(doc => doc.data() as Product)
-            .filter(rp => rp.id !== id)
-            .slice(0, 4);
-          
-          if (relatedData.length === 0) {
+          try {
+            const q = query(
+              collection(db, 'products'),
+              where('category', '==', p.category),
+              limit(5) // Get one extra to filter out the current product if it's there
+            );
+            const relSnap = await getDocs(q);
+
+            const dynamicRelated = relSnap.docs
+              .map(doc => ({ ...doc.data(), id: doc.id } as Product))
+              .filter(prod => prod.id !== id)
+              .slice(0, 4);
+              
+            if (dynamicRelated.length < 4) {
+              const staticRelated = STATIC_PRODUCTS
+                .filter(sp => sp.category === p!.category && sp.id !== id)
+                .slice(0, 4 - dynamicRelated.length);
+              setRelatedProducts([...dynamicRelated, ...staticRelated].slice(0, 4));
+            } else {
+              setRelatedProducts(dynamicRelated);
+            }
+          } catch (relError) {
+            console.error("Error fetching related products:", relError);
             setRelatedProducts(STATIC_PRODUCTS.filter(sp => sp.category === p!.category && sp.id !== id).slice(0, 4));
-          } else {
-            setRelatedProducts(relatedData);
+            handleFirestoreError(relError, OperationType.GET, 'products');
           }
         }
       } catch (error) {
         console.error("Error fetching product:", error);
+        // Even on error, try fallback
+        const fallback = STATIC_PRODUCTS.find(p => p.id === id) || null;
+        setProduct(fallback);
+        handleFirestoreError(error, OperationType.GET, 'products');
       } finally {
         setLoading(false);
       }

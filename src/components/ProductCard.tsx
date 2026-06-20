@@ -27,12 +27,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
     >
       {/* Badges */}
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-        {product.isOffer && (
+        {product.badge && (
+          <span className="px-3 py-1 bg-green-600 text-white text-[10px] font-bold uppercase rounded-full shadow-lg shadow-green-200">
+            {product.badge}
+          </span>
+        )}
+        {!product.badge && product.isOffer && (
           <span className="px-3 py-1 bg-orange-500 text-white text-[10px] font-bold uppercase rounded-full shadow-lg shadow-orange-200">
             Offer
           </span>
         )}
-        {product.isTrending && (
+        {!product.badge && product.isTrending && (
           <span className="px-3 py-1 bg-green-600 text-white text-[10px] font-bold uppercase rounded-full shadow-lg shadow-green-200">
             Trending
           </span>
@@ -92,7 +97,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             </div>
             {product.originalPrice && (
               <p className="text-[10px] font-bold text-orange-500 uppercase tracking-wide">
-                Save ₹{product.originalPrice - product.price}
+                {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
               </p>
             )}
           </div>

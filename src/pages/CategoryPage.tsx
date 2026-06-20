@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { CATEGORIES as STATIC_CATEGORIES, PRODUCTS as STATIC_PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
@@ -20,17 +20,18 @@ export const CategoryPage = () => {
       try {
         // Fetch Categories
         const catSnap = await getDocs(collection(db, 'categories'));
-        const categoriesData = catSnap.docs.map(doc => doc.data() as Category);
+        const categoriesData = catSnap.docs.map(doc => ({ ...doc.data(), id: doc.id } as Category));
         setCategories(categoriesData.length > 0 ? categoriesData : STATIC_CATEGORIES);
 
         // Fetch Products for this category
-        // Note: Field mapping might be needed if case differs
+        const targetCategory = categoryName?.charAt(0).toUpperCase() + categoryName!.slice(1).toLowerCase();
         const q = query(
           collection(db, 'products'),
-          where('category', '==', categoryName?.charAt(0).toUpperCase() + categoryName!.slice(1).toLowerCase())
+          where('category', '==', targetCategory)
         );
         const prodSnap = await getDocs(q);
-        let productsData = prodSnap.docs.map(doc => doc.data() as Product);
+        
+        let productsData = prodSnap.docs.map(doc => ({ ...doc.data(), id: doc.id } as Product));
         
         // Fallback for demo
         if (productsData.length === 0) {
@@ -42,6 +43,7 @@ export const CategoryPage = () => {
         setProducts(productsData);
       } catch (error) {
         console.error("Error fetching category data:", error);
+        handleFirestoreError(error, OperationType.GET, 'categories/products');
       } finally {
         setLoading(false);
       }

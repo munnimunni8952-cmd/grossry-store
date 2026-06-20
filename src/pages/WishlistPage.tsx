@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, ShoppingCart, Trash2, ArrowLeft, ShoppingBasket } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { PRODUCTS } from '../constants';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
 import { Product } from '../types';
 
 export const WishlistPage = () => {
@@ -15,12 +14,21 @@ export const WishlistPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productsData = snapshot.docs.map(doc => doc.data() as Product);
+    setLoading(true);
+    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+      const productsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Product));
       setAllProducts(productsData.length > 0 ? productsData : PRODUCTS);
       setLoading(false);
+    }, (error) => {
+      console.error('Error fetching products for wishlist:', error);
+      setAllProducts(PRODUCTS);
+      setLoading(false);
+      handleFirestoreError(error, OperationType.GET, 'products');
     });
-    return unsub;
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const wishlistedProducts = allProducts.filter(p => wishlist.includes(p.id));
