@@ -54,7 +54,7 @@ export const WishlistPage = () => {
           <ArrowLeft size={24} />
         </Link>
         <div>
-          <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">My Wishlist</h1>
+          <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 uppercase tracking-tighter leading-none">My Wishlist</h1>
           <p className="text-gray-400 font-bold uppercase tracking-widest text-xs mt-1">
             {wishlistedProducts.length} {wishlistedProducts.length === 1 ? 'Item' : 'Items'} Saved
           </p>
@@ -130,13 +130,13 @@ export const WishlistPage = () => {
           <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-gray-200 mx-auto mb-8 shadow-inner">
             <Heart size={40} />
           </div>
-          <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-3">Your wishlist is empty</h2>
-          <p className="text-gray-400 font-medium mb-12 max-w-sm mx-auto">
+          <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter mb-3">Your wishlist is empty</h2>
+          <p className="text-[14px] md:text-[16px] text-gray-400 font-medium mb-12 max-w-sm mx-auto">
             Save items you like to see them here later and grab them before they're gone!
           </p>
           <Link 
             to="/" 
-            className="inline-flex items-center gap-3 px-10 py-5 bg-gray-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-2xl shadow-black/20 hover:bg-black hover:-translate-y-1 active:scale-95 transition-all"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-gray-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-[14px] md:text-[16px] shadow-2xl shadow-black/20 hover:bg-black hover:-translate-y-1 active:scale-95 transition-all"
           >
             <ShoppingBasket size={20} />
             Shop Now

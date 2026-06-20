@@ -55,13 +55,13 @@ export const OrdersPage = () => {
         <Link to="/" className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">My Orders</h1>
+        <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 uppercase tracking-tighter">My Orders</h1>
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading orders...</p>
+          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-[12px]">Loading orders...</p>
         </div>
       ) : orders.length > 0 ? (
         <div className="space-y-6">
@@ -79,8 +79,8 @@ export const OrdersPage = () => {
                     <Package size={28} />
                   </div>
                   <div>
-                    <h3 className="font-black text-gray-900 uppercase tracking-tight">Order #{order.id.slice(-6).toUpperCase()}</h3>
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                    <h3 className="font-black text-[16px] md:text-[18px] text-gray-900 uppercase tracking-tight">Order #{order.id.slice(-6).toUpperCase()}</h3>
+                    <p className="text-[10px] md:text-[12px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
                        <Clock size={12} /> {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'Just now'}
                     </p>
                   </div>
@@ -92,13 +92,13 @@ export const OrdersPage = () => {
                   )}>
                     {order.status}
                   </span>
-                  <span className="text-xl font-black text-gray-900 tracking-tighter">₹{parseFloat(order.total_amount).toFixed(0)}</span>
+                  <span className="text-[20px] md:text-[24px] font-black text-gray-900 tracking-tighter">₹{parseFloat(order.total_amount).toFixed(0)}</span>
                 </div>
               </div>
 
               <div className="border-t border-gray-50 pt-6 space-y-3">
                 {order.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-sm">
+                  <div key={idx} className="flex justify-between items-center text-[14px]">
                     <span className="text-gray-600 font-medium">
                       {item.name} <span className="text-gray-400 text-xs font-bold pl-2">x{item.quantity}</span>
                     </span>
@@ -110,12 +110,12 @@ export const OrdersPage = () => {
               {order.notes && (
                 <div className="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Order Notes</p>
-                  <p className="text-sm text-gray-600 italic">"{order.notes}"</p>
+                  <p className="text-[14px] text-gray-600 italic">"{order.notes}"</p>
                 </div>
               )}
 
               <div className="mt-8 flex justify-end">
-                <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-green-600 hover:text-green-700 transition-colors">
+                <button className="flex items-center gap-2 text-[12px] md:text-[14px] font-black uppercase tracking-widest text-green-600 hover:text-green-700 transition-colors">
                   View Full Details <ChevronRight size={16} />
                 </button>
               </div>
@@ -127,11 +127,11 @@ export const OrdersPage = () => {
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-gray-300 mx-auto mb-6">
             <ShoppingBasket size={32} />
           </div>
-          <h3 className="text-xl font-black text-gray-900 uppercase tracking-tighter mb-2">No orders found</h3>
-          <p className="text-gray-500 mb-8 max-w-xs mx-auto">Looks like you haven't ordered anything yet. Time to fill your basket!</p>
+          <h3 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter mb-2">No orders found</h3>
+          <p className="text-[14px] md:text-[16px] text-gray-500 mb-8 max-w-xs mx-auto">Looks like you haven't ordered anything yet. Time to fill your basket!</p>
           <Link 
             to="/" 
-            className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-green-900/20 active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest text-[14px] md:text-[16px] shadow-xl shadow-green-900/20 active:scale-95 transition-all"
           >
             Start Shopping
           </Link>

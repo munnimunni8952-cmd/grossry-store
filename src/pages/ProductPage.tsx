@@ -138,13 +138,13 @@ export const ProductPage = () => {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="grid grid-cols-4 gap-2 sm:gap-4 pb-2">
               {images.map((img, i) => (
                 <button 
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={cn(
-                    "w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all shadow-md shrink-0",
+                    "w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all shadow-md shrink-0",
                     selectedImage === i ? "border-green-600 scale-105" : "border-transparent opacity-60 hover:opacity-100"
                   )}
                 >
@@ -160,7 +160,7 @@ export const ProductPage = () => {
               <span className="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-black uppercase rounded-full mb-4 inline-block tracking-widest border border-green-100">
                 {product.category}
               </span>
-              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 uppercase tracking-tighter leading-none">
+              <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 mb-4 uppercase tracking-tighter leading-none">
                 {product.name}
               </h1>
               <div className="flex items-center gap-6">
@@ -185,7 +185,7 @@ export const ProductPage = () => {
                   <span className="text-2xl text-gray-400 line-through font-medium leading-none">₹{product.originalPrice}</span>
                 )}
               </div>
-              <p className="text-gray-500 font-medium">MRP (Inclusive of all taxes) • {product.unit}</p>
+              <p className="text-[14px] md:text-[16px] text-gray-500 font-medium">MRP (Inclusive of all taxes) • {product.unit}</p>
               {product.originalPrice && (
                 <div className="mt-3 inline-block px-4 py-2 bg-orange-50 text-orange-600 rounded-xl text-sm font-bold border border-orange-100">
                   You Save ₹{product.originalPrice - product.price} ({Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF)
@@ -193,7 +193,7 @@ export const ProductPage = () => {
               )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed text-lg mb-10 pb-10 border-b border-gray-100 italic">
+            <p className="text-[14px] md:text-[16px] text-gray-600 leading-relaxed mb-10 pb-10 border-b border-gray-100 italic">
               "{product.description}"
             </p>
 
@@ -221,7 +221,7 @@ export const ProductPage = () => {
                     className="flex-1 h-14 sm:h-16 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-900/20 group active:scale-[0.98]"
                   >
                     <ShoppingCart size={22} className="group-hover:-translate-y-1 transition-transform" />
-                    <span className="text-sm sm:text-base">Add to Basket</span>
+                    <span className="text-[14px] md:text-[16px]">Add to Basket</span>
                   </button>
                 )}
                 <button 
@@ -238,7 +238,7 @@ export const ProductPage = () => {
               </div>
               <button 
                 onClick={handleBuyNow}
-                className="flex-1 h-14 sm:h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center transition-all shadow-xl shadow-orange-900/20 hover:shadow-2xl hover:shadow-orange-900/40 hover:-translate-y-1 active:scale-[0.98] text-sm sm:text-base border border-white/10"
+                className="flex-1 h-14 sm:h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center transition-all shadow-xl shadow-orange-900/20 hover:shadow-2xl hover:shadow-orange-900/40 hover:-translate-y-1 active:scale-[0.98] text-[14px] md:text-[16px] border border-white/10"
               >
                 Buy Now
               </button>
@@ -265,7 +265,7 @@ export const ProductPage = () => {
               ) : (
                 <button 
                   onClick={() => addToCart(product)}
-                  className="flex-1 h-16 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-900/20 active:scale-[0.98] text-xs"
+                  className="flex-1 h-16 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-900/20 active:scale-[0.98] text-[14px]"
                 >
                   <ShoppingCart size={18} />
                   Add
@@ -273,13 +273,13 @@ export const ProductPage = () => {
               )}
               <button 
                 onClick={handleBuyNow}
-                className="flex-[2] h-16 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center shadow-xl shadow-orange-900/30 active:scale-[0.98] text-sm tracking-tight border border-white/5"
+                className="flex-[2] h-16 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center shadow-xl shadow-orange-900/30 active:scale-[0.98] text-[14px] tracking-tight border border-white/5"
               >
                 Buy Now
               </button>
 </div>
 
-            <div className="grid grid-cols-2 gap-6 bg-gray-50 rounded-[2rem] p-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50 rounded-3xl sm:rounded-[2rem] p-6 sm:p-8">
               {[
                 { icon: ShieldCheck, title: "100% Quality", desc: "Premium quality guaranteed" },
                 { icon: Clock, title: "1-Hour Delivery", desc: "Super fast local shipping" },
@@ -303,7 +303,7 @@ export const ProductPage = () => {
         {/* Reviews Section Placeholder */}
         <section className="mt-32">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Customer Reviews</h2>
+            <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter">Customer Reviews</h2>
             <div className="flex items-center gap-2">
               <span className="text-green-600 font-bold">Write a review</span>
               <ArrowLeft size={18} className="rotate-180" />
@@ -331,7 +331,7 @@ export const ProductPage = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-600 leading-relaxed italic">"{review.comment}"</p>
+                <p className="text-[14px] md:text-[16px] text-gray-600 leading-relaxed italic">"{review.comment}"</p>
               </div>
             ))}
           </div>
@@ -339,10 +339,12 @@ export const ProductPage = () => {
 
         {/* Related Products */}
         <section className="mt-32">
-          <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">You May Also Like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter mb-12">You May Also Like</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {relatedProducts.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} />
+              <div key={p.id} className="w-full h-full">
+                <ProductCard product={p} index={i} />
+              </div>
             ))}
           </div>
         </section>

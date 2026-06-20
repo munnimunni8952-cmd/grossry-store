@@ -71,6 +71,36 @@ export const PRODUCTS: Product[] = [
     unit: '591 ml'
   },
   {
+    id: 't5',
+    name: 'Head & Shoulders Anti-Dandruff Shampoo',
+    category: 'Personal Care',
+    price: 299,
+    originalPrice: 349,
+    rating: 4.7,
+    badge: 'Best Seller',
+    isTrending: true,
+    image: 'https://i.ibb.co/gb2vf591/image.png',
+    images: ['https://i.ibb.co/gb2vf591/image.png'],
+    description: 'Head & Shoulders Anti-Dandruff Shampoo',
+    reviewsCount: 156,
+    unit: '1 bottle'
+  },
+  {
+    id: 't6',
+    name: 'Crunchy Granola Roasted Nuts, Low Sugar 400g | Bamboo',
+    category: 'Healthy Breakfast',
+    price: 249,
+    originalPrice: 299,
+    rating: 4.8,
+    badge: 'Healthy Choice',
+    isTrending: true,
+    image: 'https://i.ibb.co/HLCR7vDC/image.png',
+    images: ['https://i.ibb.co/HLCR7vDC/image.png'],
+    description: 'Crunchy Granola Roasted Nuts, Low Sugar 400g by Bamboo',
+    reviewsCount: 89,
+    unit: '400g'
+  },
+  {
     id: 's1',
     name: 'Kurkure Masala Munch Crisps',
     category: 'Snacks',

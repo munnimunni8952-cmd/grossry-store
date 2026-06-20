@@ -82,8 +82,23 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-gray-900 text-white h-[34px] flex items-center overflow-hidden w-full">
+        <div className="animate-marquee flex whitespace-nowrap text-[13px] sm:text-[14px] font-medium w-max">
+          {[1, 2, 3, 4].map((i) => (
+            <span key={i} className="flex items-center">
+              🚚 Free Delivery <span className="opacity-30 mx-4 md:mx-8">|</span> 
+              ⭐ 100% Secure <span className="opacity-30 mx-4 md:mx-8">|</span> 
+              ⚡ Quick Delivery <span className="opacity-30 mx-4 md:mx-8">|</span> 
+              ⏱️ Within 30 Minutes <span className="opacity-30 mx-4 md:mx-8">|</span> 
+              🏆 Top Quality Products <span className="opacity-30 mx-4 md:mx-8">|</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <nav className="fixed top-[34px] left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group relative">
@@ -172,9 +187,10 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
+    </nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
+    {/* Mobile Menu */}
+    <AnimatePresence>
         {isMenuOpen && (
           <>
             <motion.div
@@ -343,6 +359,6 @@ export const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 };

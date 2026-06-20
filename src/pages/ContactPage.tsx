@@ -49,10 +49,10 @@ export const ContactPage = () => {
         {/* Info Column */}
         <div className="lg:w-1/3 space-y-12">
           <div>
-            <h1 className="text-6xl font-black text-gray-900 uppercase tracking-tighter leading-none mb-6">
+            <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 uppercase tracking-tighter leading-none mb-6">
               Get in <br /> <span className="text-green-600">Touch</span>
             </h1>
-            <p className="text-gray-500 font-medium text-lg">
+            <p className="text-gray-500 font-medium text-[14px] md:text-[16px]">
               Have a question about your order or our delivery process? We're here to help you get the freshest groceries.
             </p>
           </div>
@@ -152,7 +152,7 @@ export const ContactPage = () => {
 
               <button 
                 type="submit"
-                className="w-full bg-gray-900 text-white h-16 rounded-2xl font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center gap-3 hover:bg-black hover:scale-[1.01] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
+                className="w-full bg-gray-900 text-white h-16 rounded-2xl font-black uppercase tracking-[0.2em] text-[14px] md:text-[16px] flex items-center justify-center gap-3 hover:bg-black hover:scale-[1.01] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
               >
                 Send Message
                 <Send size={18} />

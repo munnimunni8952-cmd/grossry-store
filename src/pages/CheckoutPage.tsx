@@ -112,7 +112,7 @@ export const CheckoutPage = () => {
         <Link to="/cart" className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">Checkout</h1>
+        <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 uppercase tracking-tighter">Checkout</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -125,7 +125,7 @@ export const CheckoutPage = () => {
                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
                   <User size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-tighter text-gray-900">Delivery Details</h2>
+                <h2 className="text-[24px] md:text-[32px] font-black uppercase tracking-tighter text-gray-900">Delivery Details</h2>
               </div>
               <div className="grid grid-cols-1 gap-6">
                 <div>
@@ -180,7 +180,7 @@ export const CheckoutPage = () => {
                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
                   <CreditCard size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-tighter text-gray-900">Payment Option</h2>
+                <h2 className="text-[24px] md:text-[32px] font-black uppercase tracking-tighter text-gray-900">Payment Option</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
@@ -204,7 +204,7 @@ export const CheckoutPage = () => {
                     )}>
                       <pay.icon size={24} />
                     </div>
-                    <span className="font-bold text-sm uppercase tracking-wider">{pay.label}</span>
+                    <span className="font-bold text-[14px] md:text-[16px] uppercase tracking-wider">{pay.label}</span>
                   </button>
                 ))}
               </div>
@@ -214,7 +214,7 @@ export const CheckoutPage = () => {
               type="submit"
               disabled={isSubmitting}
               className={cn(
-                "w-full bg-gradient-to-br from-gray-800 to-black hover:from-black hover:to-black text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xl transition-all shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 active:scale-[0.98] flex items-center justify-center gap-3 border border-white/10",
+                "w-full bg-gradient-to-br from-gray-800 to-black hover:from-black hover:to-black text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-[14px] md:text-[16px] transition-all shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 active:scale-[0.98] flex items-center justify-center gap-3 border border-white/10",
                 isSubmitting && "opacity-70 cursor-not-allowed pointer-events-none"
               )}
             >
@@ -224,7 +224,7 @@ export const CheckoutPage = () => {
 
           <div className="flex items-center justify-center gap-6 p-6 bg-green-50 rounded-3xl border border-green-100 italic">
             <ShieldCheck className="text-green-600 shrink-0" size={24} />
-            <p className="text-sm font-bold text-gray-700">
+            <p className="text-[14px] md:text-[16px] font-bold text-gray-700">
               Safe & Secure Checkouts. Standard 256-bit encryption. Freshness guaranteed or 100% refund.
             </p>
           </div>
@@ -233,7 +233,7 @@ export const CheckoutPage = () => {
         {/* Sidebar Summary */}
         <div className="hidden lg:block">
           <div className="bg-gray-50 rounded-[3rem] p-10 border border-gray-100">
-            <h3 className="text-2xl font-black uppercase tracking-tighter mb-8 text-gray-900 border-b border-gray-200 pb-6">Your Order Summary</h3>
+            <h3 className="text-[24px] md:text-[32px] font-black uppercase tracking-tighter mb-8 text-gray-900 border-b border-gray-200 pb-6">Your Order Summary</h3>
             <div className="space-y-6">
               <div className="flex justify-between text-gray-500 font-bold uppercase text-xs tracking-[0.1em]">
                 <span>Items ({itemCount})</span>

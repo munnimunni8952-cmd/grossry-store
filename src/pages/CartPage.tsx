@@ -20,13 +20,13 @@ export const CartPage = () => {
           <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-8">
             <ShoppingBasket size={64} />
           </div>
-          <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter mb-4">Your basket is empty</h2>
-          <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto">
+          <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter mb-4">Your basket is empty</h2>
+          <p className="text-[14px] md:text-[16px] text-gray-500 font-medium mb-10 max-w-sm mx-auto">
             Looks like you haven't added anything to your basket yet. Start shopping and discover our fresh products!
           </p>
           <Link 
             to="/" 
-            className="px-10 py-5 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-green-900/20 transition-all"
+            className="text-[14px] md:text-[16px] px-10 py-5 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-green-900/20 transition-all"
           >
             Start Shopping
           </Link>
@@ -41,7 +41,7 @@ export const CartPage = () => {
         <Link to="/" className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">Your Shopping Basket ({itemCount})</h1>
+        <h1 className="text-[32px] md:text-[48px] font-black text-gray-900 uppercase tracking-tighter leading-none">Your Shopping Basket ({itemCount})</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">

@@ -32,7 +32,7 @@ function App() {
           <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-green-100 selection:text-green-900">
             <ScrollToTop />
             <Navbar />
-            <main className="flex-grow pt-16 sm:pt-20">
+            <main className="flex-grow pt-[98px] sm:pt-[114px]">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/category/:categoryName" element={<CategoryPage />} />

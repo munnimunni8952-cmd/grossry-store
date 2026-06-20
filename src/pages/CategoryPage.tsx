@@ -59,8 +59,8 @@ export const CategoryPage = () => {
   if (!category) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-32 text-center">
-        <h2 className="text-3xl font-black uppercase tracking-tighter">Category Not Found</h2>
-        <Link to="/" className="text-green-600 font-bold mt-4 inline-block">Back to Home</Link>
+        <h2 className="text-[32px] md:text-[48px] font-black uppercase tracking-tighter">Category Not Found</h2>
+        <Link to="/" className="text-green-600 font-bold mt-4 inline-block text-[14px] md:text-[16px]">Back to Home</Link>
       </div>
     );
   }
@@ -85,10 +85,10 @@ export const CategoryPage = () => {
               <ChevronRight size={14} />
               <span className="text-white">{category.name}</span>
             </div>
-            <h1 className="text-5xl sm:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-4">
+            <h1 className="text-[32px] md:text-[48px] font-black text-white uppercase tracking-tighter leading-none mb-4">
               {category.name}
             </h1>
-            <p className="text-white/70 font-medium max-w-xl text-lg px-1">
+            <p className="text-[14px] md:text-[16px] text-white/70 font-medium max-w-xl px-1">
               Explore our premium selection of fresh {category.name.toLowerCase()} sourced directly from organic farms.
             </p>
           </div>
@@ -99,11 +99,11 @@ export const CategoryPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-black transition-all">
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl text-[14px] md:text-[16px] font-black uppercase tracking-widest hover:bg-black transition-all">
               <SlidersHorizontal size={18} />
               Filters
             </button>
-            <div className="text-sm font-bold text-gray-400">
+            <div className="text-[14px] md:text-[16px] font-bold text-gray-400">
               <span className="text-gray-900">{products.length}</span> Products Found
             </div>
           </div>
@@ -115,30 +115,32 @@ export const CategoryPage = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading products...</p>
+            <p className="text-[10px] md:text-[12px] text-gray-400 font-bold uppercase tracking-widest">Loading products...</p>
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {products.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
+              <div key={product.id} className="w-full h-full">
+                <ProductCard product={product} index={i} />
+              </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-32 border-2 border-dashed border-gray-100 rounded-[3rem]">
-            <p className="text-gray-400 font-bold uppercase tracking-widest">No products available in this category yet.</p>
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-[14px] md:text-[16px]">No products available in this category yet.</p>
           </div>
         )}
       </div>
 
       {/* Other Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
-        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter mb-10">Explore More Categories</h2>
+        <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter mb-10">Explore More Categories</h2>
         <div className="flex flex-wrap gap-4">
           {categories.filter(c => c.id !== category.id).map(cat => (
             <Link 
               key={cat.id} 
               to={`/category/${cat.name.toLowerCase()}`}
-              className="px-8 py-4 bg-gray-50 hover:bg-green-600 hover:text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-gray-100"
+              className="px-8 py-4 bg-gray-50 hover:bg-green-600 hover:text-white rounded-2xl text-[14px] md:text-[16px] font-black uppercase tracking-widest transition-all border border-gray-100"
             >
               {cat.name}
             </Link>
