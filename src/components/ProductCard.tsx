@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, Plus, Minus, Eye } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Product } from '../types';
@@ -14,6 +14,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
   const { addToCart, cart, updateQuantity, toggleWishlist, wishlist } = useCart();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const navigate = useNavigate();
   
   const cartItem = cart.find(item => item.id === product.id);
   const isWishlisted = wishlist.includes(product.id);
@@ -24,7 +25,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
-      className="group bg-white h-full flex flex-col rounded-3xl border border-gray-100 hover:border-green-200 hover:shadow-2xl hover:shadow-green-100/50 transition-all duration-500 overflow-hidden relative"
+      onClick={() => navigate(`/product/${product.id}`)}
+      className="group bg-white h-full flex flex-col rounded-3xl border border-gray-100 hover:border-green-200 hover:shadow-2xl hover:shadow-green-100/50 transition-all duration-500 overflow-hidden relative cursor-pointer"
     >
       {/* Badges */}
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
@@ -47,7 +49,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
 
       {/* Wishlist Toggle */}
       <button 
-        onClick={() => toggleWishlist(product.id)}
+        onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
         className={cn(
           "absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md shadow-lg",
           isWishlisted 
@@ -59,7 +61,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
       </button>
 
       {/* Image */}
-      <Link to={`/product/${product.id}`} className="block relative w-full h-[180px] sm:h-[220px] overflow-hidden bg-gray-50 shrink-0">
+      <div className="block relative w-full h-[180px] sm:h-[220px] overflow-hidden bg-gray-50 shrink-0">
         {!isImageLoaded && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse" />
         )}
@@ -78,7 +80,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-      </Link>
+      </div>
 
       {/* Content */}
       <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between">
@@ -91,12 +93,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             </div>
           </div>
           
-          <Link to={`/product/${product.id}`} className="block mb-3">
+          <div className="block mb-3">
             <h3 className="text-[14px] sm:text-[16px] md:text-[18px] font-bold text-gray-900 line-clamp-2 md:line-clamp-1 group-hover:text-green-600 transition-colors uppercase tracking-tight">
               {product.name}
             </h3>
             <p className="text-[10px] sm:text-xs text-gray-500 font-medium mt-0.5">{product.unit}</p>
-          </Link>
+          </div>
         </div>
 
         <div className="mt-auto">
@@ -117,40 +119,34 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
               </div>
             </div>
 
-            <div className="flex flex-col xl:flex-row gap-2">
-              <Link 
-                to={`/product/${product.id}`}
-                className="w-full flex-1 h-9 sm:h-11 bg-gray-100 text-gray-700 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 hover:bg-gray-200 transition-colors active:scale-95 duration-200 px-3 shrink-0"
-                title="View Product"
-              >
-                <Eye size={16} className="shrink-0" />
-                <span className="text-[12px] sm:text-[14px] xl:text-[12px] 2xl:text-[14px] font-bold uppercase tracking-wider">View</span>
-              </Link>
-
+            <div className="flex flex-col gap-2">
               {cartItem ? (
-                <div className="w-full flex-[1.5] h-9 sm:h-11 flex items-center justify-between px-1.5 sm:px-2 bg-green-600 text-white rounded-lg sm:rounded-xl overflow-hidden shadow-sm shadow-green-200 shrink-0">
+                <div 
+                  className="w-full h-12 sm:h-[56px] flex items-center justify-between px-2 sm:px-4 bg-green-600 text-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm shadow-green-200 shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button 
-                    onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-black/10 transition-colors rounded-md active:scale-90 shrink-0"
+                    onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, cartItem.quantity - 1); }}
+                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-black/10 transition-colors rounded-lg active:scale-90 shrink-0"
                   >
-                    <Minus size={14} />
+                    <Minus size={18} />
                   </button>
-                  <span className="flex-1 text-center font-bold text-xs sm:text-sm">{cartItem.quantity}</span>
+                  <span className="flex-1 text-center font-bold text-sm sm:text-base">{cartItem.quantity}</span>
                   <button 
-                    onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-black/10 transition-colors rounded-md active:scale-90 shrink-0"
+                    onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, cartItem.quantity + 1); }}
+                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-black/10 transition-colors rounded-lg active:scale-90 shrink-0"
                   >
-                    <Plus size={14} />
+                    <Plus size={18} />
                   </button>
                 </div>
               ) : (
                 <button 
-                  onClick={() => addToCart(product)}
-                  className="w-full flex-[1.5] h-9 sm:h-11 bg-green-600 text-white rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 hover:bg-green-700 transition-colors shadow-sm shadow-green-200 active:scale-95 duration-200 px-3 shrink-0"
+                  onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                  className="w-full h-12 sm:h-[56px] bg-green-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 hover:bg-green-700 transition-colors shadow-sm shadow-green-200 active:scale-95 duration-200 px-4 shrink-0"
                   title="Add to Cart"
                 >
-                  <ShoppingCart size={16} className="shrink-0" />
-                  <span className="text-[12px] sm:text-[14px] xl:text-[12px] 2xl:text-[14px] font-bold uppercase tracking-wider whitespace-nowrap">Add</span>
+                  <ShoppingCart size={20} className="shrink-0" />
+                  <span className="text-[14px] sm:text-[16px] font-bold uppercase tracking-wider whitespace-nowrap">Add to Cart</span>
                 </button>
               )}
             </div>
