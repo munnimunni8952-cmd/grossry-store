@@ -57,8 +57,25 @@ export const CartPage = () => {
                 exit={{ opacity: 0, x: 20 }}
                 className="bg-white rounded-[2.5rem] border border-gray-100 p-6 sm:p-8 flex items-center gap-6 group hover:border-green-200 hover:shadow-xl transition-all"
               >
-                <Link to={`/product/${item.id}`} className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-gray-50 shrink-0 shadow-sm">
-                  <img src={item.image} alt={item.name} loading="lazy" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <Link to={`/product/${item.id}`} className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-gray-50 shrink-0 shadow-sm relative">
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    loading="lazy" 
+                    decoding="async"
+                    className="opacity-0 w-full h-full object-cover transition-opacity duration-300 relative z-10" 
+                    style={{ width: '100%', height: '100%' }}
+                    referrerPolicy="no-referrer" 
+                    onLoad={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
+                  />
                 </Link>
                 
                 <div className="flex-1 flex flex-col sm:flex-row justify-between gap-6">

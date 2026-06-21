@@ -15,23 +15,88 @@ import { seedDatabase } from '../lib/seed';
 const HERO_SLIDES = [
   {
     id: 1,
-    title: "Freshness Delivered to Your Doorstep",
-    subtitle: "UP TO 40% OFF",
-    description: "Get the finest organic vegetables and fruits sourced directly from local farms. Pure quality, pure health.",
+    title: "Special Offers & Fresh Groceries",
+    subtitle: "NEW UPDATE",
+    description: "Fast Delivery • Best Prices\nFresh Products Delivered to Your Doorstep",
     image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1920&fm=webp",
     color: "bg-green-600",
     textPosition: "left"
   },
   {
     id: 2,
-    title: "Organic Daily Essentials Store",
-    subtitle: "NEW ARRIVALS",
-    description: "Discover our wide range of organic daily essentials. From farm-fresh milk to pure Himalayan honey.",
+    title: "Special Offers & Fresh Groceries",
+    subtitle: "NEW UPDATE",
+    description: "Fast Delivery • Best Prices\nFresh Products Delivered to Your Doorstep",
     image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=1920&fm=webp",
     color: "bg-orange-500",
     textPosition: "center"
   }
 ];
+
+const FastLoadProduct: React.FC<{ product: Product, index: number }> = ({ product, index }) => {
+  const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'timeout'>('loading');
+
+  useEffect(() => {
+    let isMounted = true;
+    let hasResolved = false;
+    const img = new Image();
+    
+    // Only wait up to 2.5 seconds before hiding
+    const timeoutId = setTimeout(() => {
+      if (isMounted && !hasResolved) {
+        hasResolved = true;
+        setStatus('timeout');
+      }
+    }, 2500);
+
+    img.onload = () => {
+      if (isMounted && !hasResolved) {
+        hasResolved = true;
+        clearTimeout(timeoutId);
+        setStatus('success');
+      }
+    };
+
+    img.onerror = () => {
+      if (isMounted && !hasResolved) {
+        hasResolved = true;
+        clearTimeout(timeoutId);
+        setStatus('error');
+      }
+    };
+    
+    img.src = product.image;
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  }, [product.image]);
+
+  if (status === 'success') {
+    return (
+      <div className="w-full h-full">
+        <ProductCard product={product} index={index} />
+      </div>
+    );
+  }
+
+  if (status === 'loading') {
+    return (
+      <div className="w-full h-full min-h-[350px] rounded-3xl bg-white border border-gray-100 overflow-hidden animate-pulse flex flex-col">
+        <div className="w-full h-[180px] sm:h-[220px] bg-gray-200" />
+        <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+          <div className="h-4 sm:h-5 bg-gray-200 rounded-md w-full" />
+          <div className="h-4 sm:h-5 bg-gray-200 rounded-md w-2/3" />
+          <div className="mt-auto h-10 sm:h-12 bg-gray-200 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
+  // error or timeout -> hide completely
+  return null;
+};
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -112,7 +177,7 @@ export const Home = () => {
     }
   };
 
-  const trendingProducts = STATIC_PRODUCTS.filter(p => ['t1', 't2', 't3', 't4', 't5', 't6'].includes(p.id));
+  const trendingProducts = STATIC_PRODUCTS.filter(p => ['t1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(p.id));
   const summerSpecials = STATIC_PRODUCTS.filter(p => ['s1', 's2', 's3', 's4'].includes(p.id));
   const freshVeggies = STATIC_PRODUCTS.filter(p => ['v1', 'v2'].includes(p.id));
 
@@ -156,7 +221,7 @@ export const Home = () => {
       )}
 
       {/* Hero Section */}
-      <section className="relative h-[600px] sm:h-[700px] overflow-hidden">
+      <section className="relative w-full overflow-hidden h-[300px] rounded-b-[18px] sm:rounded-none sm:h-[700px]">
         <AnimatePresence mode="wait">
           {HERO_SLIDES.map((slide, index) => (
             index === currentSlide && (
@@ -168,46 +233,57 @@ export const Home = () => {
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 className="absolute inset-0"
               >
-                <div className="absolute inset-0 bg-black/30 z-10" />
+                <div className="absolute inset-0 bg-black/50 sm:bg-black/30 z-10" />
+                <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
                 <img 
                   src={slide.image} 
                   alt={slide.title}
                   loading="eager"
-                  className="w-full h-full object-cover"
+                  decoding="async"
+                  className="opacity-0 w-full h-full object-cover transition-opacity duration-700 relative z-0"
+                  style={{ width: '100%', height: '100%' }}
                   referrerPolicy="no-referrer"
+                  onLoad={(e) => {
+                    (e.target as HTMLImageElement).classList.add('opacity-100');
+                    (e.target as HTMLImageElement).classList.remove('opacity-0');
+                  }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).classList.add('opacity-100');
+                    (e.target as HTMLImageElement).classList.remove('opacity-0');
+                  }}
                 />
-                <div className="absolute inset-0 z-20 flex items-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div className="absolute inset-0 z-20 flex items-center p-5 sm:p-6 lg:p-8 max-w-7xl mx-auto">
                   <motion.div 
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4, duration: 0.8 }}
                     className={cn(
-                      "max-w-2xl w-full text-white",
-                      slide.textPosition === 'center' ? 'mx-auto text-center' : ''
+                      "w-full text-white sm:max-w-2xl",
+                      slide.textPosition === 'center' ? 'mx-auto text-center' : 'text-center sm:text-left'
                     )}
                   >
-                    <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-bold tracking-widest uppercase mb-6 border border-white/30">
+                    <span className="inline-block px-3 py-1 sm:px-4 sm:py-1 bg-white/20 backdrop-blur-md rounded-full text-[11px] sm:text-sm font-bold tracking-widest uppercase mb-3 sm:mb-6 border border-white/30">
                       {slide.subtitle}
                     </span>
-                    <h1 className="text-[32px] md:text-[48px] font-black mb-6 leading-[0.9] uppercase tracking-tighter">
+                    <h1 className="text-[26px] sm:text-[32px] md:text-[48px] font-black mb-2 sm:mb-6 leading-[1.1] sm:leading-[0.9] uppercase tracking-tight sm:tracking-tighter w-full max-w-[320px] mx-auto sm:max-w-none">
                       {slide.title}
                     </h1>
-                    <p className="text-[14px] md:text-[16px] text-white/80 mb-10 leading-relaxed font-medium">
+                    <p className="text-[14px] sm:text-[14px] md:text-[16px] text-white/90 mb-5 sm:mb-10 leading-relaxed font-medium whitespace-pre-line">
                       {slide.description}
                     </p>
                     <div className={cn(
-                      "flex flex-col sm:flex-row flex-wrap gap-4",
-                      slide.textPosition === 'center' ? 'sm:justify-center' : ''
+                      "flex justify-center flex-wrap gap-3 sm:gap-4",
+                      slide.textPosition === 'center' ? 'sm:justify-center' : 'sm:justify-start'
                     )}>
                       <button 
                         onClick={() => scrollToSection('categories')}
-                        className="text-[14px] md:text-[16px] px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-green-900/40 flex items-center justify-center gap-3 group"
+                        className="text-[14px] px-8 py-3 sm:px-8 sm:py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl sm:rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-green-900/40 flex items-center justify-center gap-2 group"
                       >
-                        Shop Now <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        Shop Now <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                       </button>
                       <button 
                         onClick={() => scrollToSection('trending')}
-                        className="text-[14px] md:text-[16px] px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-2xl font-bold uppercase tracking-wider transition-all text-center"
+                        className="hidden sm:flex text-[14px] md:text-[16px] px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-2xl font-bold uppercase tracking-wider transition-all items-center justify-center"
                       >
                         View Offers
                       </button>
@@ -220,7 +296,7 @@ export const Home = () => {
         </AnimatePresence>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
+        <div className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-2 sm:gap-3">
           {HERO_SLIDES.map((_, i) => (
             <button 
               key={i}
@@ -234,37 +310,15 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Trust Badges */}
-      <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 -mt-24 z-30">
-        <div className="bg-white rounded-[40px] shadow-2xl p-6 sm:p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {[
-            { icon: Truck, title: "Free Delivery", desc: "For orders above ₹500", color: "bg-blue-50 text-blue-600" },
-            { icon: ShieldCheck, title: "100% Secure", desc: "Safe payment methods", color: "bg-green-50 text-green-600" },
-            { icon: Clock, title: "Quick Delivery", desc: "Within 60 minutes", color: "bg-orange-50 text-orange-600" },
-            { icon: Star, title: "Top Quality", desc: "Farm fresh organic", color: "bg-yellow-50 text-yellow-600" }
-          ].map((item, i) => (
-            <div key={i} className="flex sm:flex-row items-center sm:items-start text-left gap-4 p-4 hover:bg-gray-50 rounded-3xl transition-colors group">
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform", item.color)}>
-                <item.icon size={28} />
-              </div>
-              <div>
-                <h4 className="text-[16px] md:text-[18px] font-bold text-gray-900">{item.title}</h4>
-                <p className="text-[14px] md:text-[16px] text-gray-500 font-medium">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Categories */}
-      <section id="categories" className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-10">
+      <section id="categories" className="max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-0">
+        <div className="flex justify-between items-end mb-6 sm:mb-10 px-2 sm:px-0">
           <div>
-            <span className="text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-2 block">Departments</span>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-1 sm:mb-2 block">Departments</span>
             <h2 className="text-[24px] md:text-[32px] font-black text-gray-900 uppercase tracking-tighter">Shop by Category</h2>
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="flex overflow-x-auto sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 pb-4 sm:pb-0 px-2 sm:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {STATIC_CATEGORIES.map((category, i) => (
             <motion.div
               key={category.id}
@@ -272,19 +326,30 @@ export const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="w-full"
+              className="min-w-[140px] sm:min-w-0 w-[140px] sm:w-full flex justify-center snap-start shrink-0"
             >
               <Link 
                 to={`/category/${category.name.toLowerCase()}`} 
-                className="group flex flex-col items-center bg-white rounded-[16px] p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer w-full"
+                className="group flex flex-col items-center bg-white rounded-[16px] p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer w-full h-full"
               >
-                <div className="w-full aspect-square overflow-hidden bg-gray-50 rounded-[16px] mb-3">
+                <div className="w-full aspect-square overflow-hidden bg-gray-50 rounded-[16px] mb-3 relative shrink-0">
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
                   <img 
                     src={category.image} 
                     alt={category.name}
                     loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    decoding="async"
+                    className="opacity-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-500 relative z-10"
+                    style={{ width: '100%', height: '100%' }}
                     referrerPolicy="no-referrer"
+                    onLoad={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
                   />
                 </div>
                 <h3 className="font-bold text-gray-900 text-center text-sm md:text-md tracking-tight line-clamp-1">
@@ -307,9 +372,7 @@ export const Home = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-8">
             {trendingProducts.map((product, i) => (
-              <div key={product.id} className="w-full h-full">
-                <ProductCard product={product} index={i} />
-              </div>
+              <FastLoadProduct key={product.id} product={product} index={i} />
             ))}
           </div>
         </div>
@@ -327,9 +390,7 @@ export const Home = () => {
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-8">
               {recommendedProducts.map((product, i) => (
-                <div key={`rec-${product.id}`} className="w-full h-full">
-                  <ProductCard product={product} index={i} />
-                </div>
+                <FastLoadProduct key={`rec-${product.id}`} product={product} index={i} />
               ))}
             </div>
           </div>
@@ -348,34 +409,35 @@ export const Home = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {summerSpecials.map((product, i) => (
-              <div key={product.id} className="w-full h-full">
-                <ProductCard product={product} index={i} />
-              </div>
+              <FastLoadProduct key={product.id} product={product} index={i} />
             ))}
           </div>
         </section>
 
-        {/* Promo Banner */}
-        <section className="relative h-[400px] rounded-[40px] overflow-hidden group">
-          <img 
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=70&w=1200&fm=webp" 
-            alt="Promo"
-            loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-transparent flex items-center p-6 sm:p-12">
-            <div className="max-w-md text-white">
-              <span className="text-orange-400 font-black tracking-widest uppercase mb-4 block">Limited Time Offer</span>
-              <h2 className="text-[32px] md:text-[48px] font-black mb-6 uppercase tracking-tighter leading-none">Fresh Farm <br /> Veggies Combo</h2>
-              <p className="text-[14px] md:text-[16px] text-white/80 mb-8 font-medium">Get a curated box of 10 organic vegetables for just ₹299. Freshly harvested this morning.</p>
-              <button 
-                onClick={() => navigate('/category/vegetables')}
-                className="text-[14px] md:text-[16px] px-6 py-4 sm:px-8 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold uppercase tracking-wider transition-all shadow-xl shadow-orange-900/20 w-full sm:w-auto"
-              >
-                Order Box Now
-              </button>
-            </div>
+        {/* Promotional Video Section */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col items-center">
+          <div className="mb-8 text-center">
+            <h2 className="text-[20px] md:text-[24px] font-black text-gray-900 tracking-tight mb-1">Fresh From Our Store 🎥</h2>
+            <p className="text-[14px] md:text-[15px] text-gray-500 font-medium">Watch our latest products and daily fresh grocery collection.</p>
+          </div>
+          
+          <div className="relative w-full max-w-[320px] h-[560px] sm:max-w-[340px] sm:h-[600px] rounded-[20px] overflow-hidden shadow-2xl bg-gray-100 border border-gray-200">
+            <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
+            <video 
+              src="https://www.image2url.com/r2/default/videos/1782021316476-ee75dd2e-324a-419d-8c2d-43fd1ab99927.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              controlsList="nodownload"
+              title="Promo Video"
+              className="relative z-10 w-full h-full object-cover transition-opacity duration-700 opacity-0"
+              onLoadedData={(e) => {
+                (e.target as HTMLVideoElement).classList.add('opacity-100');
+                (e.target as HTMLVideoElement).classList.remove('opacity-0');
+              }}
+            />
           </div>
         </section>
 
@@ -391,9 +453,7 @@ export const Home = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {freshVeggies.map((product, i) => (
-              <div key={product.id} className="w-full h-full">
-                <ProductCard product={product} index={i} />
-              </div>
+              <FastLoadProduct key={product.id} product={product} index={i} />
             ))}
           </div>
         </section>

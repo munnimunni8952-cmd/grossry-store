@@ -68,17 +68,28 @@ export const CategoryPage = () => {
   return (
     <div className="pb-20">
       {/* Header */}
-      <div className="relative h-[300px] sm:h-[400px] mb-12 overflow-hidden">
+      <div className="relative h-[300px] sm:h-[400px] mb-12 overflow-hidden bg-gray-200">
+        <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
         <img 
           src={category.image} 
           alt={category.name}
-          className="w-full h-full object-cover"
+          className="opacity-0 w-full h-full object-cover transition-opacity duration-700 relative z-10"
+          style={{ width: '100%', height: '100%' }}
           loading="eager"
+          decoding="async"
           referrerPolicy="no-referrer"
+          onLoad={(e) => {
+            (e.target as HTMLImageElement).classList.add('opacity-100');
+            (e.target as HTMLImageElement).classList.remove('opacity-0');
+          }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).classList.add('opacity-100');
+            (e.target as HTMLImageElement).classList.remove('opacity-0');
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20" />
         
-        <div className="absolute inset-0 flex flex-col justify-end">
+        <div className="absolute inset-0 flex flex-col justify-end z-30">
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
             <div className="flex items-center gap-3 text-sm font-bold text-white/60 mb-4 px-1">
               <Link to="/" className="hover:text-white transition-colors">Home</Link>

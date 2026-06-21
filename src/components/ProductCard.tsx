@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, Plus, Minus, Eye } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -13,6 +13,7 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
   const { addToCart, cart, updateQuantity, toggleWishlist, wishlist } = useCart();
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   
   const cartItem = cart.find(item => item.id === product.id);
   const isWishlisted = wishlist.includes(product.id);
@@ -59,12 +60,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
 
       {/* Image */}
       <Link to={`/product/${product.id}`} className="block relative w-full h-[180px] sm:h-[220px] overflow-hidden bg-gray-50 shrink-0">
+        {!isImageLoaded && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
         <motion.img 
           layoutId={`prod-img-${product.id}`}
           src={product.image} 
           alt={product.name}
-          loading="lazy"
-          className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-110"
+          loading={index < 4 ? "eager" : "lazy"}
+          decoding="async"
+          onLoad={() => setIsImageLoaded(true)}
+          className={cn(
+            "w-full h-full object-contain p-4 transition-all duration-700 group-hover:scale-110",
+            isImageLoaded ? "opacity-100" : "opacity-0"
+          )}
+          style={{ width: '100%', height: '100%' }}
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />

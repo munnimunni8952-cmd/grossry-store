@@ -19,8 +19,8 @@ export const PRODUCTS: Product[] = [
     rating: 4.8,
     badge: 'Best Seller',
     isTrending: true,
-    image: 'https://i.ibb.co/QL79ysy/image.png',
-    images: ['https://i.ibb.co/QL79ysy/image.png'],
+    image: 'https://i.ibb.co/1G4sBnHw/tata-salt.webp',
+    images: ['https://i.ibb.co/1G4sBnHw/tata-salt.webp'],
     description: 'Tata Salt, Vacuum Evaporated Iodised Salt.',
     reviewsCount: 156,
     unit: '1 kg'
@@ -99,6 +99,21 @@ export const PRODUCTS: Product[] = [
     description: 'Crunchy Granola Roasted Nuts, Low Sugar 400g by Bamboo',
     reviewsCount: 89,
     unit: '400g'
+  },
+  {
+    id: 't7',
+    name: 'Crunchy Chocolate Granola',
+    category: 'Breakfast & Healthy Snacks',
+    price: 299,
+    originalPrice: 349,
+    rating: 4.8,
+    badge: 'New Arrival',
+    isTrending: true,
+    image: 'https://i.ibb.co/KxK8s2hq/image.png',
+    images: ['https://i.ibb.co/KxK8s2hq/image.png'],
+    description: 'Crunchy Chocolate Granola, delicious and healthy snack.',
+    reviewsCount: 124,
+    unit: '1 pack'
   },
   {
     id: 's1',

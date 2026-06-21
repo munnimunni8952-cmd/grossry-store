@@ -128,15 +128,26 @@ export const ProductPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Image Gallery */}
           <div className="space-y-6">
-            <div className="aspect-square rounded-[3rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-xl">
+            <div className="aspect-square rounded-[3rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-xl relative">
               <motion.img 
                 layoutId={`prod-img-${product.id}`}
                 src={images[selectedImage] || product.image} 
                 alt={product.name}
                 loading="eager"
-                className="w-full h-full object-cover"
+                decoding="async"
+                className="opacity-0 w-full h-full object-cover transition-opacity duration-300 relative z-10"
+                style={{ width: '100%', height: '100%' }}
                 referrerPolicy="no-referrer"
+                onLoad={(e) => {
+                  (e.target as HTMLImageElement).classList.add('opacity-100');
+                  (e.target as HTMLImageElement).classList.remove('opacity-0');
+                }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).classList.add('opacity-100');
+                  (e.target as HTMLImageElement).classList.remove('opacity-0');
+                }}
               />
+              <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
             </div>
             <div className="grid grid-cols-4 gap-2 sm:gap-4 pb-2">
               {images.map((img, i) => (
@@ -144,11 +155,28 @@ export const ProductPage = () => {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={cn(
-                    "w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all shadow-md shrink-0",
+                    "w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all shadow-md shrink-0 relative bg-gray-50",
                     selectedImage === i ? "border-green-600 scale-105" : "border-transparent opacity-60 hover:opacity-100"
                   )}
                 >
-                  <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img 
+                    src={img} 
+                    alt="" 
+                    loading="lazy" 
+                    decoding="async"
+                    className="opacity-0 w-full h-full object-cover transition-opacity duration-300 relative z-10" 
+                    style={{ width: '100%', height: '100%' }}
+                    referrerPolicy="no-referrer" 
+                    onLoad={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).classList.add('opacity-100');
+                      (e.target as HTMLImageElement).classList.remove('opacity-0');
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
                 </button>
               ))}
             </div>

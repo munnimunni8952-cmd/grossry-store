@@ -54,6 +54,12 @@ export const Navbar = () => {
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error", event.error);
       setIsListening(false);
+      
+      if (event.error === 'not-allowed') {
+        alert("Microphone permission was denied. Please allow microphone access in your browser or open the app in a new tab to use voice search.");
+      } else {
+        alert("Speech recognition error: " + event.error);
+      }
     };
 
     recognition.onresult = (event: any) => {
@@ -316,13 +322,26 @@ export const Navbar = () => {
                           }}
                           className="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl cursor-pointer transition-colors group"
                         >
-                          <img 
-                            src={product.image} 
-                            alt={product.name}
-                            loading="lazy"
-                            className="w-20 h-20 object-cover rounded-xl"
-                            referrerPolicy="no-referrer"
-                          />
+                          <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-200 relative">
+                            <div className="absolute inset-0 bg-gray-200 animate-pulse z-0" />
+                            <img 
+                              src={product.image} 
+                              alt={product.name}
+                              loading="lazy"
+                              decoding="async"
+                              className="opacity-0 w-full h-full object-cover transition-opacity duration-300 relative z-10"
+                              style={{ width: '100%', height: '100%' }}
+                              referrerPolicy="no-referrer"
+                              onLoad={(e) => {
+                                (e.target as HTMLImageElement).classList.add('opacity-100');
+                                (e.target as HTMLImageElement).classList.remove('opacity-0');
+                              }}
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).classList.add('opacity-100');
+                                (e.target as HTMLImageElement).classList.remove('opacity-0');
+                              }}
+                            />
+                          </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">{product.name}</h4>
                             <p className="text-sm text-gray-500">{product.category} • {product.unit}</p>
